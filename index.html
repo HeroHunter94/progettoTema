@@ -1,0 +1,332 @@
+<!--Hacer una web de numerología similar (aunque más corta) que la siguiente:
+
+https://numerologia-cotidiana.com/
+
+Mi sugerencia para lo que van a incluir...
+
+Año Calendario	2025
+Número personal	Reducir el día de nacimiento a un dígito
+Número del Destino	Sumar fecha de nacimiento
+Número del nombre	Suma de todas las letras del nombre completo al nacer
+Número del Alma	Sumar las vocales de los nombres + la de los apellidos
+Expresión del Alma	Sumar las consonantes de los nombres + la de los apellidos
+Proyecto sentido	Sumar las vocales de los nombres
+Año Personal	Año Calendario + Día Nacimiento + Mes de Nacimiento
+Mes Personal	Año Personal + Mes en curso
+Respecto de la fechaCalendario, se obtiene así (ejemplo)
+let hoy=new Date(); Al  dejar vacío el argumento de Date(), JavaScript toma la fecha del ordenador.
+Extraer el año: yrCalendar= hoy.getYear()
+
+Objeto Date:https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Date
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Numerology</title>
+    <link href="OIP.webp" type="icon" rel="shortcut icon" />
+    <link rel="stylesheet" href="normalize.css" />
+    <link id = "theme" rel="stylesheet" href="dark.css" />
+    <link  href="light.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-image: var(--background-image);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            font-family: Arial, sans-serif;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+    .container {
+        background: rgba(0, 0, 0, 0.6); /* semi-trasparente per leggibilità */
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+    }
+
+    label, select, input, button {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+        font-size: 16px;
+    }
+
+    input, select {
+        padding: 8px;
+        border-radius: 5px;
+        border: none;
+    }
+
+    button {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #ffffffcc;
+        color: #000;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #ddd;
+    }
+
+    #output {
+        margin-top: 20px;
+        font-weight: bold;
+    }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+
+        <h1>Numerology</h1>
+        <label for="surname">Fullname</label>
+        <input id="surname" type="text" value="Paoli" required />
+        <input id="name" type="text" value="Gino" required /><br />
+        <label for="dBirth">Date of birth</label>
+        <input id="dBirth" type="date" value = "1990-01-01" required /><br />
+        <label for="question">What do you wish to calculate?</label>
+        <select id="scelta">
+            <option value="1" selection>1. Calendar Year</option>
+            <option value="2">2. Personal Number</option>
+            <option value="3">3. Destiny Number</option>
+            <option value="4">4. Name Number</option>
+            <option value="5">5. Soul Number</option>
+            <option value="6">6. Expression of the soul</option>
+            <option value="7">7. Project Purpose</option>
+            <option value="8">8. Personal Year</option>
+            <option value="9">9. Personal Month</option>
+        </select>
+        <button type="button" onclick="calculate()">Calculate</button>
+        <button type="button" onclick="information()">Information</button>
+        <p id="output"></p>
+        <label for = "theme-sel">Theme</label>
+    <select id = "theme-sel" onchange = "changeTheme(this.value)">
+        <option value = "dark">Dark</option>
+        <option value = "light">Light</option>
+    </select>
+    </div>
+    <script src="arrayObj.js"></script>
+    <script src="function.js"></script>
+    <script>
+        const NAME = document.getElementById("name");
+        const SURNAME = document.getElementById("surname");
+        const BIRTH = document.getElementById("dBirth");
+        const SCELTA = document.getElementById("scelta");
+        let today=new Date();
+        let interval;
+
+        function changeTheme(tema){
+            document.getElementById("theme").href= "./" + tema + ".css";
+        }
+        function calculate() {
+            let name = NAME.value;
+            let surname = SURNAME.value;
+            let birth = BIRTH.value;
+            let scelta = parseInt(SCELTA.value);
+            const dateBirth = new Date(BIRTH.value);
+            if (name == "") {
+                document.getElementById("output").innerHTML = "Please add your name";
+                interval = setTimeout(clean, 600);
+                return;
+            } else if (surname == "") {
+                document.getElementById("output").innerHTML = "Please add your surname";
+                interval = setTimeout(clean, 600);
+                return;
+            } else if (birth == "") {
+                document.getElementById("output").innerHTML =
+                    "Please add your date of birth";
+                interval = setTimeout(clean, 600);
+                return;
+            }
+
+            clearTimeout(interval);
+            switch (scelta) {
+                case 1: {// year
+                    console.log(today);
+                    let yrCalendar = today.getFullYear();
+                    document.getElementById("output").innerHTML = `We are in <b>${yrCalendar}</b>`;
+                    break;
+                }
+
+                case 2: {// personal number
+                    let dayBirth = dateBirth.getDate();
+                    console.log(dayBirth);
+                    document.getElementById("output").innerHTML = `Hey ${name} ${surname} your Personal Number is: ${reductionMaestro(dayBirth)}`;
+                    break;
+                }
+
+                case 3: {// destiny number
+                    document.getElementById("output").innerHTML = `Hey ${name} ${surname} your Destiny Number is: ${reductionMaestro(extractionDate(birth))}`;
+                    break;
+                }
+
+                case 4: {// name number
+                    let fullName = (name + surname).trim().toUpperCase();
+                    console.log(fullName);
+                    document.getElementById("output").innerHTML = `Hey ${name} ${surname} your Name Number is: ${reductionMaestro(numberLetter(fullName))}`;
+                    break;
+                }
+
+                case 5: {// vowel (soul number)
+                    fullName = (name + surname).trim().toUpperCase();
+                    console.log(fullName);
+                    document.getElementById("output").innerHTML = `Hey ${name} ${surname} your Soul Number is: ${reductionMaestro(numberLetter(extraction(fullName, VOWEL)))}`;
+                    break;
+                }
+
+                case 6: {// consonant (expression of the soul number)
+                    fullName = (name + surname).trim().toUpperCase();
+                    console.log(fullName);
+                    document.getElementById("output").innerHTML = `Hey ${name} ${surname} your Expression of the Soul Number is: ${reductionMaestro(numberLetter(extraction(fullName, CONSONANT)))}`;
+                    break;
+                }
+
+                case 7: {// project sentido (project purpose number)
+                    name = name.trim().toUpperCase();
+                    console.log(name);
+                    document.getElementById("output").innerHTML = `Hey ${name} ${surname} your Project Purpose Number is: ${reductionMaestro(numberLetter(extraction(name, VOWEL)))}`;
+                    break;
+                }
+
+                case 8: {// personal year number
+                    let yrCalendar = today.getFullYear().toString();
+                    document.getElementById("output").innerHTML = `Hey ${name} ${surname} your Personal Year Number is: ${reductionMaestro(extractionDate(changeYear(birth, yrCalendar, 0)))}`;
+                    break;
+                }
+
+                case 9: {// personal month number
+                    let currentMonth = (today.getMonth() + 1).toString();
+                    console.log(currentMonth);
+                    document.getElementById("output").innerHTML = `Hey ${name} ${surname} your Personal Month Number is: ${reductionMaestro(extractionDate(changeYear(birth, currentMonth, 5)))}`;
+                    break;
+                }
+
+                default: {
+                    document.getElementById("output").innerHTML = "Please select a valid option.";
+                    break;
+                }
+            }
+        }
+
+        function information() {
+            let name = NAME.value;
+            let surname = SURNAME.value;
+            let birth = BIRTH.value;
+            let scelta = parseInt(SCELTA.value);
+
+            const dateBirth = new Date(BIRTH.value);
+            
+            if (name == "") {
+                document.getElementById("output").innerHTML = "Please add your name";
+                interval = setTimeout(clean, 600);
+                return;
+            } else if (surname == "") {
+                document.getElementById("output").innerHTML = "Please add your surname";
+                interval = setTimeout(clean, 600);
+                return;
+            } else if (birth == "") {
+                document.getElementById("output").innerHTML = "Please add your date of birth";
+                interval = setTimeout(clean, 600);
+                return;
+            }
+            clearTimeout(interval);
+            switch(scelta) {
+                case 2: {
+                    let tema = document.getElementById("theme-sel").value;
+                    let index = check(dateBirth.getDate());
+                    let result = encodeURIComponent(arrObj[index].numerology);
+                    const url = `personalNumber.html?name=${encodeURIComponent(name)}&surname=${encodeURIComponent(surname)}&result=Your Personal Number ${encodeURIComponent(arrObj[index].number)} mean: ${result}&theme=${tema}`;
+                    window.open(url, "_blank"); // ✅ apre nuova scheda
+                    
+                    break;
+                }
+                case 3:{
+                    let tema = document.getElementById("theme-sel").value;
+                    let index = check(extractionDate(birth));
+                    let result = encodeURIComponent(arrObj[index].destinyNumber);
+                    const url = `destiny.html?name=${encodeURIComponent(name)}&surname=${encodeURIComponent(surname)}&result=Your Destiny Number ${encodeURIComponent(arrObj[index].number)} mean: ${result}&theme=${tema}`;
+                    window.open(url, "_blank"); // ✅ apre nuova scheda
+                    
+                    break;
+                }
+                case 4: {
+                    let tema = document.getElementById("theme-sel").value;
+                    let index = check(numberLetter((name + surname).trim().toUpperCase()));
+                    let result = encodeURIComponent(arrObj[index].name);
+                    const url = `name.html?name=${encodeURIComponent(name)}&surname=${encodeURIComponent(surname)}&result=Your Name Number ${encodeURIComponent(arrObj[index].number)} mean: ${encodeURIComponent(result)}&theme=${tema}`;
+                    window.open(url, "_blank"); // ✅ apre nuova scheda
+                    
+                    break;
+                } 
+                case 5: {
+                    let tema = document.getElementById("theme-sel").value;
+                    let index = check(numberLetter(extraction((name + surname).trim().toUpperCase(), VOWEL)));
+                    let result = encodeURIComponent(arrObj[index].soul);
+                    const url = `soul.html?name=${encodeURIComponent(name)}&surname=${encodeURIComponent(surname)}&result=Your Soul Number ${encodeURIComponent(arrObj[index].number)} mean: ${encodeURIComponent(result)}&theme=${tema}`;
+                    window.open(url, "_blank"); // ✅ apre nuova scheda
+                    
+                    break;
+
+                }
+                case 6: {
+                    let tema = document.getElementById("theme-sel").value;
+                    let index = check(numberLetter(extraction((name + surname).trim().toUpperCase(), CONSONANT)));
+                    let result = encodeURIComponent(arrObj[index].expressionOfSoul);
+                    const url = `expression.html?name=${encodeURIComponent(name)}&surname=${encodeURIComponent(surname)}&result=Your Expression of the Soul Number ${encodeURIComponent(arrObj[index].number)} mean: ${encodeURIComponent(result)}&theme=${tema}`;
+                    window.open(url, "_blank"); // ✅ apre nuova scheda
+                    
+                    break;
+
+                }
+                case 7: {
+                    let tema = document.getElementById("theme-sel").value;
+                    let index = check(numberLetter(extraction(name.trim().toUpperCase(), VOWEL)));
+                    let result = encodeURIComponent(arrObj[index].projectPurpose);
+                    const url = `project.html?name=${encodeURIComponent(name)}&surname=${encodeURIComponent(surname)}&result=Your Project Purpose Number ${encodeURIComponent(arrObj[index].number)} mean: ${encodeURIComponent(result)}&theme=${tema}`;
+                    window.open(url, "_blank"); // ✅ apre nuova scheda
+                    
+                    break;
+
+                }
+                case 8: {
+                    let tema = document.getElementById("theme-sel").value;
+                    let index = check(extractionDate(changeYear(birth, today.getFullYear().toString(), 0)));
+                    let result = encodeURIComponent(arrObj[index].personalYear);
+                    const url = `personalyear.html?name=${encodeURIComponent(name)}&surname=${encodeURIComponent(surname)}&result=Your Personal Year Number ${encodeURIComponent(arrObj[index].number)} mean: ${encodeURIComponent(result)}&theme=${tema}`;
+                    window.open(url, "_blank"); // ✅ apre nuova scheda
+                    
+                    break;
+
+                }
+                case 9: {
+                    let tema = document.getElementById("theme-sel").value;
+                    let index = check(extractionDate(changeYear(birth, (today.getMonth() + 1).toString(), 5)));
+                    let result = encodeURIComponent(arrObj[index].personalMonth);
+                    const url = `personalmonth.html?name=${encodeURIComponent(name)}&surname=${encodeURIComponent(surname)}&result=Your Personal Month Number ${encodeURIComponent(arrObj[index].number)} mean: ${encodeURIComponent(result)}&theme=${tema}`;
+                    window.open(url, "_blank"); // ✅ apre nuova scheda
+                    
+                    break;
+
+                }
+            }
+        }
+    
+        
+    </script>
+    
+
+</body>
+</html>

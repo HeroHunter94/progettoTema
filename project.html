@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project</title>
+    <link href="OIP.webp" type="icon" rel="shortcut icon" />
+    <link rel="stylesheet" href="normalize.css" />
+    <link id = "theme" rel="stylesheet" href="dark.css" />
+    <link  href="light.css" />
+<style>
+     body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-image: var(--background-image);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            font-family: Arial, sans-serif;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+    .container {
+        background: rgba(0, 0, 0, 0.6); /* semi-trasparente per leggibilità */
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+    }
+    </style>
+  </head>
+  <body>
+    <div class = "container">
+    <h1 id="title"></h1>
+    <p id="description"></p>
+    </div>
+    <script src="arrayObj.js"></script>
+    <script src="function.js"></script>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const name = params.get("name");
+      const surname = params.get("surname");
+      const result = decodeURIComponent(params.get("result")); // 🔁 decodifica
+       const tema = params.get("theme");
+      document.getElementById("theme").href = "./" + tema + ".css";
+      document.getElementById("title").textContent = `Hello ${name} ${surname}`;
+      document.getElementById("description").textContent = result;
+    </script>
+</body>
+</html>
